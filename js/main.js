@@ -74,9 +74,10 @@ function editService(index) {
     }
 }
 
-function Contato(nome, email, assunto, mensagem) {
+function Contato(nome, email, phone, assunto, mensagem) {
     this.nome = nome;
     this.email = email;
+    this.phone = phone;
     this.assunto = assunto;
     this.mensagem = mensagem;
 }
@@ -91,22 +92,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const nome = document.getElementById("nome").value.trim();
             const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
             const assunto = document.getElementById("assunto").value;
             const mensagem = document.getElementById("mensagem").value.trim();
 
-            if (!nome || !email || !assunto || !mensagem) {
-                alert("Por favor, preencha todos os campos obrigatórios.");
+            if (!nome || !email || !phone || !assunto || !mensagem) {
+                alert("Please Complete All Fields");
                 return;
             }
 
-            const contato = new Contato(nome, email, assunto, mensagem);
+            const contato = new Contato(nome, email,phone, assunto, mensagem);
 
             alert(
-                `Mensagem enviada com sucesso!\n\n` +
-                `Nome: ${contato.nome}\n` +
+                `Success!\n\n` +
+                `Name: ${contato.nome}\n` +
                 `Email: ${contato.email}\n` +
-                `Assunto: ${contato.assunto}\n` +
-                `Mensagem: ${contato.mensagem}`
+                `Phone: ${contato.phone}\n` +
+                `Service: ${contato.assunto}\n` +
+                `Message: ${contato.mensagem}`
             );
 
             form.reset();
