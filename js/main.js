@@ -1,18 +1,3 @@
-(function ($) {
-    "use strict";
-
-    // Spinner
-    var spinner = function () {
-        setTimeout(function () {
-            if ($('#spinner').length > 0) {
-                $('#spinner').removeClass('show');
-            }
-        }, 1);
-    };
-    spinner();
-
-})(jQuery);
-
 let services = JSON.parse(localStorage.getItem('services')) || [];
 
 function renderServices() {
@@ -25,18 +10,18 @@ function renderServices() {
     }
 
     services.forEach((service, index) => {
-        // Lista visual
+
         if (list) {
             const li = document.createElement("li");
             li.textContent = service + " ";
 
-            // Botão Remover
+
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "Remover";
             deleteBtn.classList.add("btn", "btn-primary");
             deleteBtn.onclick = () => removeService(index);
 
-            // Botão Editar
+
             const editBtn = document.createElement("button");
 
             editBtn.textContent = "Editar";
@@ -48,7 +33,7 @@ function renderServices() {
             list.appendChild(li);
         }
 
-        // Dropdown do formulário
+
         if (select) {
             const option = document.createElement("option");
             option.value = service;
@@ -68,7 +53,7 @@ function addService() {
         input.value = "";
         renderServices();
     } else {
-        alert("Serviço já existe ou é inválido.");
+        alert("Invalid!");
     }
 }
 
@@ -85,11 +70,10 @@ function editService(index) {
         localStorage.setItem('services', JSON.stringify(services));
         renderServices();
     } else {
-        alert("Nome inválido ou já existente.");
+        alert("Invalid!");
     }
 }
 
-// Objeto Contato
 function Contato(nome, email, assunto, mensagem) {
     this.nome = nome;
     this.email = email;
