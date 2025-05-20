@@ -13,60 +13,81 @@
 
 })(jQuery);
 
-// Lista de serviços
 let services = JSON.parse(localStorage.getItem('services')) || [];
 
 function renderServices() {
-    const list = document.getElementById('services-list');
-    const dropdown = document.getElementById('service-select');
-    list.innerHTML = '';
-    dropdown.innerHTML = '<option selected disabled>Select a Service</option>';
+    const list = document.getElementById("services-list");
+    const select = document.getElementById("assunto");
+
+    if (list) list.innerHTML = "";
+    if (select) {
+        select.innerHTML = '<option disabled selected>Select a Service</option>';
+    }
 
     services.forEach((service, index) => {
-        // Adiciona à lista visual
-        const li = document.createElement('li');
-        li.innerHTML = `
-            ${service}
-            <button class="btn btn-primary" onclick="editService(${index})">Editar</button>
-            <button class="btn btn-primary" onclick="deleteService(${index})">Remover</button>
-        `;
-        list.appendChild(li);
+        // Lista visual
+        if (list) {
+            const li = document.createElement("li");
+            li.textContent = service + " ";
 
-        // Adiciona à dropdown
-        const option = document.createElement('option');
-        option.value = service;
-        option.textContent = service;
-        dropdown.appendChild(option);
+            // Botão Remover
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Remover";
+            deleteBtn.classList.add("btn", "btn-primary");
+            deleteBtn.onclick = () => removeService(index);
+
+            // Botão Editar
+            const editBtn = document.createElement("button");
+
+            editBtn.textContent = "Editar";
+            editBtn.classList.add("btn", "btn-primary");
+            editBtn.onclick = () => editService(index);
+
+            li.appendChild(editBtn);
+            li.appendChild(deleteBtn);
+            list.appendChild(li);
+        }
+
+        // Dropdown do formulário
+        if (select) {
+            const option = document.createElement("option");
+            option.value = service;
+            option.textContent = service;
+            select.appendChild(option);
+        }
     });
-
-    localStorage.setItem('services', JSON.stringify(services));
 }
 
 function addService() {
-    const input = document.getElementById('new-service');
-    const service = input.value.trim();
-    if (service !== '') {
-        services.push(service);
-        input.value = '';
+    const input = document.getElementById("new-service");
+    const serviceName = input.value.trim();
+
+    if (serviceName && !services.includes(serviceName)) {
+        services.push(serviceName);
+        localStorage.setItem('services', JSON.stringify(services));
+        input.value = "";
         renderServices();
+    } else {
+        alert("Serviço já existe ou é inválido.");
     }
 }
 
-function deleteService(index) {
+function removeService(index) {
     services.splice(index, 1);
+    localStorage.setItem('services', JSON.stringify(services));
     renderServices();
 }
 
 function editService(index) {
-    const novo = prompt("Editar serviço:", services[index]);
-    if (novo && novo.trim() !== '') {
-        services[index] = novo.trim();
+    const newName = prompt("Editar nome do serviço:", services[index]);
+    if (newName && newName.trim() !== "" && !services.includes(newName.trim())) {
+        services[index] = newName.trim();
+        localStorage.setItem('services', JSON.stringify(services));
         renderServices();
+    } else {
+        alert("Nome inválido ou já existente.");
     }
 }
-
-// Inicializa a página
-document.addEventListener('DOMContentLoaded', renderServices);
 
 // Objeto Contato
 function Contato(nome, email, assunto, mensagem) {
@@ -76,34 +97,35 @@ function Contato(nome, email, assunto, mensagem) {
     this.mensagem = mensagem;
 }
 
-// Evento de envio do formulário
 document.addEventListener("DOMContentLoaded", () => {
+    renderServices();
+
     const form = document.getElementById("contact-form");
+    if (form) {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-    form.addEventListener("submit", function (e) {
-        e.preventDefault(); // evita recarregar a página
+            const nome = document.getElementById("nome").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const assunto = document.getElementById("assunto").value;
+            const mensagem = document.getElementById("mensagem").value.trim();
 
-        const nome = document.getElementById("nome").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const assunto = document.getElementById("assunto").value;
-        const mensagem = document.getElementById("mensagem").value.trim();
+            if (!nome || !email || !assunto || !mensagem) {
+                alert("Por favor, preencha todos os campos obrigatórios.");
+                return;
+            }
 
-        if (!nome || !email || !assunto || !mensagem) {
-            alert("Por favor, preencha todos os campos obrigatórios.");
-            return;
-        }
+            const contato = new Contato(nome, email, assunto, mensagem);
 
-        const contato = new Contato(nome, email, assunto, mensagem);
+            alert(
+                `Mensagem enviada com sucesso!\n\n` +
+                `Nome: ${contato.nome}\n` +
+                `Email: ${contato.email}\n` +
+                `Assunto: ${contato.assunto}\n` +
+                `Mensagem: ${contato.mensagem}`
+            );
 
-        // Mensagem de confirmação
-        alert(
-            `Mensagem enviada com sucesso!\n\n` +
-            `Nome: ${contato.nome}\n` +
-            `Email: ${contato.email}\n` +
-            `Assunto: ${contato.assunto}\n` +
-            `Mensagem: ${contato.mensagem}`
-        );
-
-        form.reset(); // limpa o formulário
-    });
+            form.reset();
+        });
+    }
 });
